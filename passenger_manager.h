@@ -9,6 +9,7 @@ extern "C" {
 
 // Passenger Data
 typedef struct {
+    int id;
     char name[50];
     char mobile[15];
     char email[20];

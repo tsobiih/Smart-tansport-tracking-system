@@ -44,3 +44,8 @@ bool diver_login(const char* mobile, const char* pass)
 {
 
 }
+
+char *dest_id_to_dist_name(const int id)
+{
+
+}

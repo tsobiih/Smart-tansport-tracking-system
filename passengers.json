@@ -1,1 +1,23 @@
-[]
+[
+    {
+        "id": 1,
+        "fullName": "Tarek Sobih",
+        "email": "tarek@test.com",
+        "password": "123",
+        "mobile": "01000000001"
+    },
+    {
+        "id": 2,
+        "fullName": "Sara Ahmed",
+        "email": "sara@test.com",
+        "password": "123",
+        "mobile": "01100000002"
+    },
+    {
+        "id": 3,
+        "fullName": "Mahmoud Reda",
+        "email": "mahmoud@test.com",
+        "password": "123",
+        "mobile": "01200000003"
+    }
+]
