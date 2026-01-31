@@ -1,1 +1,42 @@
-[]
+[
+    {
+        "name": "Ahmed Hassan",
+        "mobile": "01012345678",
+        "password": "123",
+        "bus_id": "RAM-101",
+        "dest": 0,
+        "status": 0
+    },
+    {
+        "name": "Ibrahim El-Sayed",
+        "mobile": "01198765432",
+        "password": "123",
+        "bus_id": "SHB-205",
+        "dest": 1,
+        "status": 0
+    },
+    {
+        "name": "Mina Gerges",
+        "mobile": "01233445566",
+        "password": "123",
+        "bus_id": "ALX-550",
+        "dest": 2,
+        "status": 0
+    },
+    {
+        "name": "Ali Kamel",
+        "mobile": "01511223344",
+        "password": "123",
+        "bus_id": "RAM-102",
+        "dest": 0,
+        "status": 0
+    },
+    {
+        "name": "Khaled Gamal",
+        "mobile": "01055667788",
+        "password": "123",
+        "bus_id": "ALX-551",
+        "dest": 2,
+        "status": 0
+    }
+]

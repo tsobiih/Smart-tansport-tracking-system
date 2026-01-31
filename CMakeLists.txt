@@ -34,6 +34,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         driver_manager.h
         passenger_manager.c
         passenger_manager.h
+        json_helper.cpp
+        json_helper.h
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Smart_tansport_tracking_system APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
