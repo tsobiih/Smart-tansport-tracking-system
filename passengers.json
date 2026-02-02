@@ -1,23 +1,28 @@
-[
+{
+  "passengers": [
     {
-        "id": 1,
-        "fullName": "Tarek Sobih",
-        "email": "tarek@test.com",
-        "password": "123",
-        "mobile": "01000000001"
+      "name": "Tarek Sobih",
+      "email": "tarek@test.com",
+      "password": "123",
+      "mobile": "01000000001",
+      "history_count": 0,
+      "history": []
     },
     {
-        "id": 2,
-        "fullName": "Sara Ahmed",
-        "email": "sara@test.com",
-        "password": "123",
-        "mobile": "01100000002"
+      "name": "Sara Ahmed",
+      "email": "sara@test.com",
+      "password": "123",
+      "mobile": "01100000002",
+      "history_count": 0,
+      "history": []
     },
     {
-        "id": 3,
-        "fullName": "Mahmoud Reda",
-        "email": "mahmoud@test.com",
-        "password": "123",
-        "mobile": "01200000003"
+      "name": "Mahmoud Reda",
+      "email": "mahmoud@test.com",
+      "password": "123",
+      "mobile": "01200000003",
+      "history_count": 0,
+      "history": []
     }
-]
+  ]
+}
