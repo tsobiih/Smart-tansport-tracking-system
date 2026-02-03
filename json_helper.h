@@ -2,15 +2,17 @@
 #ifndef JSON_HELPER_H
 #define JSON_HELPER_H
 
+#include <QtTypes>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 void save_passengers_to_json();
-void load_passengers_from_json();
+qint32 load_passengers_from_json();
 
 void save_drivers_to_json();
-void load_drivers_from_json();
+char* load_drivers_from_json();
 
 void save_queues_to_json();
 void load_queues_from_json();

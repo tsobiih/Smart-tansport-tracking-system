@@ -4,20 +4,23 @@
         "fullName": "Tarek Sobih",
         "email": "tarek@test.com",
         "password": "123",
-        "mobile": "01000000001"
+        "mobile": "01000000001",
+        "lastTrip": ""
     },
     {
         "id": 2,
         "fullName": "Sara Ahmed",
         "email": "sara@test.com",
         "password": "123",
-        "mobile": "01100000002"
+        "mobile": "01100000002",
+        "lastTrip": ""
     },
     {
         "id": 3,
         "fullName": "Mahmoud Reda",
         "email": "mahmoud@test.com",
         "password": "123",
-        "mobile": "01200000003"
+        "mobile": "01200000003",
+        "lastTrip": ""
     }
 ]
