@@ -1,6 +1,7 @@
 #include "json_helper.h"
 
 #include <QFile>
+#include <QSaveFile>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -13,6 +14,12 @@ extern "C" {
   #include "queue_manager.h"
 
 }
+
+/*
+  json helper (Qt). التعليقات: هذا ملف C++ ويغلف دواله ب extern "C" حتى يمكن استدعاؤها من الـ C.
+*/
+
+extern "C" {
 
 void save_passengers_to_json()
 {
@@ -33,15 +40,18 @@ void save_passengers_to_json()
         current_p = current_p->next;
     }
 
-    QFile pFile("passengers.json");
+    QSaveFile pFile("passengers.json");
     if(pFile.open(QIODevice::WriteOnly))
     {
         QJsonDocument doc(jsonArray);
         pFile.write(doc.toJson());
-        pFile.close();
-        qDebug() << "Passengers saved successfully.";
+        if (!pFile.commit()) {
+            qDebug() << "Failed to commit passengers.json:" << pFile.errorString();
+        } else {
+            qDebug() << "Passengers saved successfully.";
+        }
     } else {
-        qDebug() << "Error saving passengers file!";
+        qDebug() << "Error opening passengers file for writing:" << pFile.errorString();
     }
 }
 
@@ -57,26 +67,43 @@ void load_passengers_from_json()
     dFile.close();
 
     QJsonDocument doc = QJsonDocument::fromJson(data);
-    QJsonArray jsonArray = doc.array();
+    if (doc.isNull() || !doc.isArray()) {
+        qDebug() << "Invalid passengers.json format.";
+        return;
+    }
 
-    // To embty the current list (optional)
-    // init_passenger_list()
+    QJsonArray jsonArray = doc.array();
 
     for(const QJsonValue &value : jsonArray)
     {
+        if (!value.isObject()) continue;
         QJsonObject obj = value.toObject();
         Passenger p;
+        memset(&p, 0, sizeof(p));
 
-        strcpy(p.name, obj["fullName"].toString().toUtf8().constData());
-        strcpy(p.mobile, obj["mobile"].toString().toUtf8().constData());
-        strcpy(p.password, obj["password"].toString().toUtf8().constData());
-        strcpy(p.email, obj["email"].toString().toUtf8().constData());
+        QByteArray tmp;
 
-        p.id = obj["id"].toInt();
+        tmp = obj.value("fullName").toString().toUtf8();
+        strncpy(p.name, tmp.constData(), sizeof(p.name) - 1);
+        p.name[sizeof(p.name) - 1] = '\0';
+
+        tmp = obj.value("mobile").toString().toUtf8();
+        strncpy(p.mobile, tmp.constData(), sizeof(p.mobile) - 1);
+        p.mobile[sizeof(p.mobile) - 1] = '\0';
+
+        tmp = obj.value("password").toString().toUtf8();
+        strncpy(p.password, tmp.constData(), sizeof(p.password) - 1);
+        p.password[sizeof(p.password) - 1] = '\0';
+
+        tmp = obj.value("email").toString().toUtf8();
+        strncpy(p.email, tmp.constData(), sizeof(p.email) - 1);
+        p.email[sizeof(p.email) - 1] = '\0';
+
+        p.id = obj.value("id").toInt();
 
         add_passenger_to_list(p);
     }
-    qDebug() << "Drivers loaded successfully: " << jsonArray.size();
+    qDebug() << "Passengers loaded successfully: " << jsonArray.size();
 }
 
 void save_drivers_to_json()
@@ -99,15 +126,18 @@ void save_drivers_to_json()
         current = current->next;
     }
 
-    QFile dFile("drivers.json");
+    QSaveFile dFile("drivers.json");
     if(dFile.open(QIODevice::WriteOnly))
     {
         QJsonDocument doc(jsonArray);
         dFile.write(doc.toJson());
-        dFile.close();
-        qDebug() << "Drivers saved successfully.";
+        if (!dFile.commit()) {
+            qDebug() << "Failed to commit drivers.json:" << dFile.errorString();
+        } else {
+            qDebug() << "Drivers saved successfully.";
+        }
     } else {
-        qDebug() << "Error saving drivers file!";
+        qDebug() << "Error opening drivers file for writing:" << dFile.errorString();
     }
 }
 
@@ -123,23 +153,45 @@ void load_drivers_from_json()
     dFile.close();
 
     QJsonDocument doc = QJsonDocument::fromJson(data);
-    QJsonArray jsonArray = doc.array();
+    if (doc.isNull() || !doc.isArray()) {
+        qDebug() << "Invalid drivers.json format.";
+        return;
+    }
 
-    // To embty the current list (optional)
-    // init_drivers_list();
+    QJsonArray jsonArray = doc.array();
 
     for(const QJsonValue &value : jsonArray)
     {
+        if (!value.isObject()) continue;
         QJsonObject obj = value.toObject();
         Driver d;
+        memset(&d, 0, sizeof(d));
 
-        strcpy(d.name, obj["name"].toString().toUtf8().constData());
-        strcpy(d.mobile, obj["mobile"].toString().toUtf8().constData());
-        strcpy(d.password, obj["password"].toString().toUtf8().constData());
-        strcpy(d.bus_id, obj["bus_id"].toString().toUtf8().constData());
+        QByteArray tmp;
 
-        d.dest = (Destination)obj["dest"].toInt();
-        d.status = (DriverStatus)obj["status"].toInt();
+        tmp = obj.value("name").toString().toUtf8();
+        strncpy(d.name, tmp.constData(), sizeof(d.name) - 1);
+        d.name[sizeof(d.name) - 1] = '\0';
+
+        tmp = obj.value("mobile").toString().toUtf8();
+        strncpy(d.mobile, tmp.constData(), sizeof(d.mobile) - 1);
+        d.mobile[sizeof(d.mobile) - 1] = '\0';
+
+        tmp = obj.value("password").toString().toUtf8();
+        strncpy(d.password, tmp.constData(), sizeof(d.password) - 1);
+        d.password[sizeof(d.password) - 1] = '\0';
+
+        tmp = obj.value("bus_id").toString().toUtf8();
+        strncpy(d.bus_id, tmp.constData(), sizeof(d.bus_id) - 1);
+        d.bus_id[sizeof(d.bus_id) - 1] = '\0';
+
+        int destInt = obj.value("dest").toInt();
+        if (destInt >= 0 && destInt < DEST_COUNT) d.dest = (Destination)destInt;
+        else d.dest = CAIRO_SHOUBRA; // fallback
+
+        int statusInt = obj.value("status").toInt();
+        if (statusInt >= STATUS_NOT_ACTIVE && statusInt <= STATUS_ON_TRIP) d.status = (DriverStatus)statusInt;
+        else d.status = STATUS_NOT_ACTIVE;
 
         add_driver_to_list(d);
     }
@@ -175,15 +227,18 @@ void save_queues_to_json()
 
     rootObj["active_trips"] = QJsonArray();
 
-    QFile tFile("trips_state.json");
+    QSaveFile tFile("trips_state.json");
     if(tFile.open(QIODevice::WriteOnly))
     {
         QJsonDocument doc(rootObj);
         tFile.write(doc.toJson());
-        tFile.close();
-        qDebug() << "Queues saved successfully.";
+        if (!tFile.commit()) {
+            qDebug() << "Failed to commit trips_state.json:" << tFile.errorString();
+        } else {
+            qDebug() << "Queues saved successfully.";
+        }
     } else {
-        qDebug() << "Error saving queues file!";
+        qDebug() << "Error opening trips_state file for writing:" << tFile.errorString();
     }
 }
 
@@ -200,42 +255,46 @@ void load_queues_from_json()
 
     QJsonDocument doc = QJsonDocument::fromJson(data);
 
-    // check the file is not damaged
-    if (doc.isNull()) {
+    if (doc.isNull() || !doc.isObject()) {
         qDebug() << "Error: Failed to parse trips_state.json";
         return;
     }
 
     QJsonObject rootObj = doc.object();
+
+    /* Empty queues once */
+    init_queues();
+
     if (rootObj.contains("queues") && rootObj["queues"].isArray()) {
         QJsonArray queuesArray = rootObj["queues"].toArray();
-        qDebug() << " Load Queues";
-        // parse the array here
+        qDebug() << "Load Queues: " << queuesArray.size();
 
         for (const QJsonValue &qVal : queuesArray) {
+            if (!qVal.isObject()) continue;
             QJsonObject queueObj = qVal.toObject();
 
-            int destID = queueObj["dest_id"].toInt();
-            QString destName = queueObj["dest_name"].toString();
+            int destID = queueObj.value("dest_id").toInt(-1);
+            if (destID < 0 || destID >= DEST_COUNT) {
+                qDebug() << "Skipping queue with invalid dest_id:" << destID;
+                continue;
+            }
 
-            // parse drivers' mobiles
             if (queueObj.contains("waiting_drivers") && queueObj["waiting_drivers"].isArray()) {
                 QJsonArray driversArr = queueObj["waiting_drivers"].toArray();
 
                 for (const QJsonValue &dVal : driversArr) {
                     QString mobile = dVal.toString();
 
-                    // Empty the current queue (optional)
-                    init_queues();
-
                     DriverNode* current_driver = all_drivers_head;
                     while(current_driver != NULL)
                     {
-                        if(current_driver->data.mobile == mobile)
+                        if (QString::fromUtf8(current_driver->data.mobile) == mobile)
                         {
-                            // Set the queue
+                            current_driver->data.dest = (Destination)destID;
                             enqueue_driver(current_driver->data);
+                            break;
                         }
+                        current_driver = current_driver->next;
                     }
                 }
             }
@@ -244,9 +303,10 @@ void load_queues_from_json()
 
     if (rootObj.contains("active_trips") && rootObj["active_trips"].isArray()) {
         QJsonArray tripsArray = rootObj["active_trips"].toArray();
-        qDebug() << " Loading Active Trips ";
-        // parse the array here
+        qDebug() << " Loading Active Trips: " << tripsArray.size();
     }
 
     qDebug() << "State Loaded Successfully";
 }
+
+} // extern "C"
