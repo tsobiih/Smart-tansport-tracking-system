@@ -14,6 +14,7 @@ typedef struct {
     char mobile[15];
     char email[20];
     char password[20];
+    char lastTrip[50];
 
 }Passenger;
 
@@ -34,8 +35,8 @@ Passenger* find_passenger_by_email(const char* email);
 
 bool register_passenger(const char* name, const char* email, const char* pass, const char* mobile);
 bool passenger_login(const char* email, const char* pass);
-int book_seat(const char* bus_id, int seat_number);
-bool cancel_booking(const char* bus_id, int seat_num, const char* email);
+int book_seat(const char *bus_id, const char* seat_number, const char* email);
+bool cancel_booking(const char *bus_id, const char *email);
 void print_passenger_history(const char* email);
 
 #ifdef __cplusplus

@@ -5,6 +5,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QDebug>
+#include <QtTypes>
 
 extern "C" {
 
@@ -28,6 +29,7 @@ void save_passengers_to_json()
         obj["email"] = current_p->p_data.email;
         obj["password"] = current_p->p_data.password;
         obj["mobile"] = current_p->p_data.mobile;
+        obj["lastTrip"] = current_p->p_data.lastTrip;
 
         jsonArray.append(obj);
         current_p = current_p->next;
@@ -45,12 +47,13 @@ void save_passengers_to_json()
     }
 }
 
-void load_passengers_from_json()
+qint32 load_passengers_from_json()
 {
+    qint32 id;
     QFile dFile("passengers.json");
     if (!dFile.open(QIODevice::ReadOnly)) {
         qDebug() << "No passengers file found.";
-        return;
+        return 0;
     }
 
     QByteArray data = dFile.readAll();
@@ -60,9 +63,9 @@ void load_passengers_from_json()
     QJsonArray jsonArray = doc.array();
 
     // To embty the current list (optional)
-    // init_passenger_list()
+    init_passenger_list();
 
-    for(const QJsonValue &value : jsonArray)
+    for (const QJsonValue &value : jsonArray)
     {
         QJsonObject obj = value.toObject();
         Passenger p;
@@ -71,12 +74,14 @@ void load_passengers_from_json()
         strcpy(p.mobile, obj["mobile"].toString().toUtf8().constData());
         strcpy(p.password, obj["password"].toString().toUtf8().constData());
         strcpy(p.email, obj["email"].toString().toUtf8().constData());
+        strcpy(p.lastTrip, obj["lastTrip"].toString().toUtf8().constData());
 
         p.id = obj["id"].toInt();
-
+        id = obj["id"].toInt();
         add_passenger_to_list(p);
     }
     qDebug() << "Drivers loaded successfully: " << jsonArray.size();
+    return id;
 }
 
 void save_drivers_to_json()
@@ -111,12 +116,13 @@ void save_drivers_to_json()
     }
 }
 
-void load_drivers_from_json()
+char* load_drivers_from_json()
 {
+    char temp_id[10];
     QFile dFile("drivers.json");
     if (!dFile.open(QIODevice::ReadOnly)) {
         qDebug() << "No drivers file found.";
-        return;
+        return NULL;
     }
 
     QByteArray data = dFile.readAll();
@@ -126,7 +132,7 @@ void load_drivers_from_json()
     QJsonArray jsonArray = doc.array();
 
     // To embty the current list (optional)
-    // init_drivers_list();
+    init_drivers_list();
 
     for(const QJsonValue &value : jsonArray)
     {
@@ -137,6 +143,7 @@ void load_drivers_from_json()
         strcpy(d.mobile, obj["mobile"].toString().toUtf8().constData());
         strcpy(d.password, obj["password"].toString().toUtf8().constData());
         strcpy(d.bus_id, obj["bus_id"].toString().toUtf8().constData());
+        strcpy(temp_id, obj["bus_id"].toString().toUtf8().constData());
 
         d.dest = (Destination)obj["dest"].toInt();
         d.status = (DriverStatus)obj["status"].toInt();
@@ -144,6 +151,7 @@ void load_drivers_from_json()
         add_driver_to_list(d);
     }
     qDebug() << "Drivers loaded successfully: " << jsonArray.size();
+    return temp_id;
 }
 
 void save_queues_to_json()
