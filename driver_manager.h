@@ -7,10 +7,10 @@ extern "C" {
 
 #include <stdbool.h>
 
-// Destinations
+/* Destinations */
 typedef enum{
     CAIRO_SHOUBRA,
-    CAIRO_METRO,    // كلية الزراعه
+    CAIRO_METRO,
     CAIRO_RAMSES,
     ALEX,
     MENOUFIA_SHEPIN,
@@ -20,47 +20,45 @@ typedef enum{
     TANTA,
 
     DEST_COUNT
-}Destination;
+} Destination;
 
-// Driver Status
+/* Driver Status */
 typedef enum {
     STATUS_NOT_ACTIVE = 0,
-    STATUS_READY,     // in the queue
-    STATUS_ON_TRIP    // in a trip
+    STATUS_READY,     /* in the queue */
+    STATUS_ON_TRIP    /* in a trip */
 } DriverStatus;
 
-// Driver Data
+/* Driver Data */
 typedef struct {
     char name[50];
     char mobile[15];
-    Destination dest; // "Cairo", "Alex", "Menoufia"
-    char bus_id[20];      // BEN-CAI-001
+    Destination dest;
+    char bus_id[20];
     DriverStatus status;
     char password[20];
 } Driver;
 
-//Driver Linked List
+/* Driver Linked List */
 typedef struct DriverNode {
     Driver data;
     struct DriverNode* next;
-}DriverNode;
+} DriverNode;
 
-// To be accessed to any header
+/* Global head (defined in driver_manager.c) */
 extern DriverNode* all_drivers_head;
 
-// Driver APIs
-void init_drivers_list();
-int add_driver_to_list(Driver d);
+/* APIs */
+void init_drivers_list(void);
+int add_driver_to_list(Driver d); /* returns 1 on success, 0 on failure (duplicate/alloc) */
 Driver* find_driver_by_mobile(const char* mobile);
 Driver* find_driver_by_id(const char* bus_id);
-void print_all_drivers();
-char[50]* dest_id_to_dist_name(const int id);
+void print_all_drivers(void);
+const char* dest_id_to_dist_name(const int id);
 bool register_driver(const char* name, const char* mobile, Destination dest, char* gen_id_buffer, const char* pass);
 bool change_driver_status(const char* bus_id, DriverStatus new_state);
 bool start_trip(const char* bus_id);
 bool diver_login(const char* mobile, const char* pass);
-
-
 
 #ifdef __cplusplus
 }
