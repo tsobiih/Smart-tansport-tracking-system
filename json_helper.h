@@ -1,4 +1,3 @@
-
 #ifndef JSON_HELPER_H
 #define JSON_HELPER_H
 
